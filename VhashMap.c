@@ -1,17 +1,5 @@
 #include "VhashMap.h"
 
-
-t_HashMap_Element * CreateHashMapEl( char * key, void * data ){
-
-    t_HashMap_Element * e = malloc(sizeof(t_HashMap_Element));
-
-    e->key = key;
-    e->data = data;
-
-    return e;
-}
-
-
 int finalMix64(uint64_t key){ // Fonction finale de mélange de bits
 
     uint64_t k = key;
@@ -28,7 +16,7 @@ int finalMix64(uint64_t key){ // Fonction finale de mélange de bits
     return k;
 }
 
-uint64_t MurmurHash64(char *  key, long long unsigned int seed){
+uint64_t MurmurHash64(char *  key, uint64_t seed){
 
     int KeyLength = strlen(key);
 
@@ -43,8 +31,8 @@ uint64_t MurmurHash64(char *  key, long long unsigned int seed){
     strcpy(k,key);
 
 
-    long long unsigned int s1 = seed;
-    long long unsigned int s2 = 0;
+    uint64_t s1 = seed;
+    uint64_t s2 = 0;
 
 
     uint64_t c1 = 0x87c37b91114253d5; // Des magic numbers pour un mélange de bits plus distribué
@@ -100,7 +88,7 @@ uint64_t MurmurHash64(char *  key, long long unsigned int seed){
     return s1 & 0xFFFFFFFFFFFFFFFF; // garder uniquement les 64bits de poids faible
 }
 
-t_HashMap * CreateHashMap(int size) {
+t_HashMap * HM_Create(int size) {
 
 
 
@@ -184,4 +172,42 @@ void HM_Set( t_HashMap * HM, char * key, void * newData){
     return;
 }
 
+void HM_Reset( t_HashMap * HM, char * key){
 
+    int startIndex = MurmurHash64(key, HM->seed) % HM->size;
+    int index = startIndex;
+
+
+    do {
+
+        printf("Trying to reset item at index : %d\n", index);
+
+        if ((HM->slots)[index].key == key){
+            (HM->slots)[index].key = NULL;
+            (HM->slots)[index].data = NULL;
+            printf("reset.\n");
+            return;
+
+        } else {
+            printf("collision !!\n");
+        }
+
+
+        index = (index + 1) % (HM->size);
+
+
+    } while ( index != startIndex );
+
+
+    printf("Warning, index not found.\n");
+    return;
+}
+
+
+
+
+void HM_Destroy( t_HashMap * HM ){
+
+    free( (HM->slots));
+    free(HM);
+}

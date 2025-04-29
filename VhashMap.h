@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <math.h>
 
+
 typedef struct  {
     char * key;
     void * data;
@@ -27,18 +28,15 @@ typedef struct {
 } t_HashMap;
 
 
-t_HashMap * CreateHashMap(int size) ;
+t_HashMap * HM_Create(int size) ;
 
 void * HM_Get( t_HashMap * HM, char * key);
 void HM_Set( t_HashMap * HM, char * key, void * newData);
 
+void HM_Reset( t_HashMap * HM, char * key);
 
 
-
-
-
-
-
+void HM_Destroy( t_HashMap * HM );
 
 
 #endif // VHASHMAP_LOADED
